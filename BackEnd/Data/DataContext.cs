@@ -18,5 +18,6 @@ namespace ParkGenius.Data
         public DbSet<Veiculo> Veiculos{ get; set; }
 
         public DbSet<EntradaSaida> EntradasSaidas{ get; set; }
+
     }
 }

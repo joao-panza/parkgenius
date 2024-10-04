@@ -38,7 +38,7 @@ namespace ParkGenius.Controllers
                 var NovaEntrada = new EntradaSaida
                 {
                     Id_Veiculo = novoVeiculo.Id_Veiculo,
-                    matricula_funcionario = 003,
+                    matricula_funcionario = 1,
                     data_entrada = DateTime.Parse(veiculo.dataHoraEntrada),
                     data_saida = null,
                     Desconto_Aplicado = false

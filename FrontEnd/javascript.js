@@ -1,6 +1,8 @@
 document.addEventListener('DOMContentLoaded', function() {
     carregarVeiculos();
+    
 });
+
 
 // Função para carregar os veículos do banco de dados
 function carregarVeiculos() {
@@ -25,7 +27,6 @@ function carregarVeiculos() {
                     <button onclick="registrarSaida('${veiculo.id_Veiculo}')">Registrar Saída</button>
                 </td>
             `;
-
                 veiculosLista.appendChild(row);
             });
         })
@@ -43,7 +44,7 @@ function CadastrarEntrada() {
         const horaEntrada = formData.get('hora-entrada');
         
         // Combina data e hora em um único valor
-        const dataHoraEntrada = new Date(`${dataEntrada}T${horaEntrada}:00`);
+        const dataHoraEntrada = new Date(`${dataEntrada}T${horaEntrada}`);
 
         const veiculo = {
             placa: formData.get('placa'),
@@ -58,10 +59,12 @@ function CadastrarEntrada() {
             body: JSON.stringify(veiculo)
         });
 
+        const retorno = await response.json();
+
         if(response.ok)
-            alert('Veiculo e entrada registrados com sucesso!');
+            alert(retorno.message);
         else
-            alert('Erro ao registrar a entrada do veiculo!');
+            alert(retorno.message);    
 
         fecharModal('modal-gestao-veiculos');
         document.getElementById('form-registro-veiculo').reset();
@@ -95,17 +98,18 @@ document.getElementById('form-cadastro-funcionario').addEventListener('submit', 
         body: JSON.stringify(funcionario)
     });    
 
+    const retorno = await response.json();
+
     if(response.ok)
-        alert('Funcionário Cadastrado com sucesso!');
+        alert(retorno.message);
     else
-        alert('Erro ao cadastrar o funcionário');
+        alert(retorno.message);
     
     
     document.getElementById('form-cadastro-funcionario').reset();
     fecharModal('modal-cadastro-funcionario');
 });
 }
-
 
 
 // Função para registrar saída do veículo (usando PUT)
@@ -128,7 +132,7 @@ async function registrarSaida(idVeiculo) {
     carregarVeiculos();
     
     // Fecha a modal após registrar a saída
-    // fecharModal();
+    fecharModal();
 }
 
 
@@ -165,6 +169,58 @@ function carregarFuncionarios() {
 function fecharModal(modalId) {
     document.getElementById(modalId).style.display = 'none';
 }
+
+// Função para buscar veículos pela placa e exibir as sugestões
+function buscarVeiculosPorPlaca() {
+    const inputPlaca = document.getElementById('placa-saida');
+    const sugestoesDiv = document.getElementById('sugestoes-veiculos');
+
+    console.log(inputPlaca);
+
+    inputPlaca.addEventListener('input', async function() {
+        const placa = this.value;
+
+        // Se a placa for vazia, escondemos as sugestões
+        if (!placa) {
+            sugestoesDiv.style.display = 'none';
+            return;
+        }
+
+        try {
+            // Faz a requisição ao backend para buscar os veículos correspondentes
+            const response = await fetch(`http://localhost:5000/api/EntradasSaidas/BuscarVeiculoPorPlaca/${placa}`);
+            if (response.ok) {
+                const veiculos = await response.json();
+
+                // Atualiza o conteúdo do div de sugestões
+                sugestoesDiv.innerHTML = ''; // Limpa sugestões anteriores
+                veiculos.forEach(veiculo => {
+                    const sugestao = document.createElement('div');
+                    sugestao.textContent = veiculo.placa + ' - ' + veiculo.modelo;
+                    sugestao.style.cursor = 'pointer';
+
+                    // Evento ao clicar em uma sugestão (preenche o input com a placa)
+                    sugestao.addEventListener('click', function() {
+                        inputPlaca.value = veiculo.placa;
+                        sugestoesDiv.style.display = 'none';
+                    });
+
+                    sugestoesDiv.appendChild(sugestao);
+                });
+
+                // Exibe o div com as sugestões
+                sugestoesDiv.style.display = 'block';
+            } else {
+                sugestoesDiv.style.display = 'none';
+            }
+        } catch (error) {
+            console.error('Erro ao buscar veículos:', error);
+            sugestoesDiv.style.display = 'none';
+        }
+    });
+}
+
+
 
 // Abrir e fechar modais
 const openModalButtons = document.querySelectorAll('.open-modal');
