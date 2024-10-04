@@ -14,7 +14,7 @@ namespace ParkGenius.Controllers
             _context = context;
         }
         [HttpPost]
-        public IActionResult CadastrarVeiculo([FromBody] Veiculo veiculo)
+        public IActionResult CadastrarVeiculo([FromBody] VeiculoDto veiculo)
         {
             // Verifica se o modelo recebido é válido
             if (ModelState.IsValid)
@@ -25,6 +25,7 @@ namespace ParkGenius.Controllers
                     Marca = veiculo.Marca,
                     Cor = veiculo.Cor,
                     Placa = veiculo.Placa
+                    
                 };
 
                 // Adiciona o funcionário ao contexto
@@ -38,7 +39,7 @@ namespace ParkGenius.Controllers
                 {
                     Id_Veiculo = novoVeiculo.Id_Veiculo,
                     matricula_funcionario = 003,
-                    data_entrada = DateTime.Now,
+                    data_entrada = DateTime.Parse(veiculo.dataHoraEntrada),
                     data_saida = null,
                     Desconto_Aplicado = false
                 };
@@ -68,15 +69,30 @@ namespace ParkGenius.Controllers
                                 veiculo.Marca,
                                 veiculo.Cor,
                                 entrada.data_entrada,          // Acessa a data de entrada
-                                entrada.data_saida
+                                entrada.data_saida,
+                                veiculo.Id_Veiculo
                             })
                             .ToList();
 
             return Ok(veiculos);
         }
 
+        [HttpPut("{id}/saida")]
+        public IActionResult AtualizarSaida(int id, DateTime registrarSaida)
+        {
+            var entradaSaida = _context.EntradasSaidas.FirstOrDefault(e => e.Id_Veiculo == id 
+            && e.data_saida == null);
 
+            if(entradaSaida == null)
+            {
+                return NotFound("Veiculo não encontrado ou já saiu.");
+            }
 
+            entradaSaida.data_saida = registrarSaida.Date;
 
+            _context.SaveChanges();
+
+            return Ok("Saída Registrada com Sucesso");
+        }
     }
 }

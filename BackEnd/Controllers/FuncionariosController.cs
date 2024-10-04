@@ -46,5 +46,11 @@ namespace ParkGenius.Controllers
             // Se o modelo for inválido, retorna uma resposta de erro
             return BadRequest("Erro ao cadastrar funcionário.");
         }
+
+        [HttpGet]
+        public IEnumerable<Funcionario> ListarFuncionarios()
+        {
+            return _context.Funcionarios;
+        }
     }
 }

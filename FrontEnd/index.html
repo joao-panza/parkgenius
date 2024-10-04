@@ -23,7 +23,7 @@
             <li><button class="open-modal" data-modal="modal-cadastro-funcionario"><i class="fas fa-user-plus"></i> Cadastro de Funcionários</button></li>
             <li><button class="open-modal" data-modal="modal-gestao-veiculos"><i class="fas fa-car"></i> Registrar Veículo</button></li>
             <li><button class="open-modal" data-modal="modal-config-tarifas"><i class="fas fa-money-bill-wave"></i> Configuração de Tarifas</button></li>
-            <li><button class="open-modal" data-modal="modal-historico-funcionarios"><i class="fas fa-history"></i> Histórico de Funcionários</button></li>
+            <li><button class="open-modal" data-modal="modal-historico-funcionarios" onclick="carregarFuncionarios()" ><i class="fas fa-history"></i> Histórico de Funcionários</button></li>
         </ul>
     </nav>
 
@@ -131,13 +131,14 @@
                 <table id="tabela-historico-funcionarios">
                     <thead>
                         <tr>
-                            <th>Funcionário</th>
-                            <th>Ação</th>
-                            <th>Data</th>
-                            <th>Hora</th>
+                            <th>Nome</th>
+                            <th>Telefone</th>
+                            <th>Email</th>
+                            <th>Login</th>
+                            <th>Senha</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="funcionarios-lista">
                         <!-- Histórico será listado aqui -->
                     </tbody>
                 </table>
@@ -147,7 +148,7 @@
         <!-- Modal para Registrar Saída -->
         <div id="modal-saida" class="modal">
             <div class="modal-content">
-                <span class="close" onclick="fecharModal()">&times;</span>
+                <span class="close" onclick="fecharModal('modal-saida')">&times;</span>
                 <h2>Registrar Saída</h2>
                 <form id="form-saida">
                     <label for="hora-saida">Hora de Saída:</label>
@@ -156,7 +157,9 @@
                     <p class="price"></p>
                 </form>
             </div>
-        </div>
+        </div> 
+
+        
     </main>
 
     <script src="javascript.js"></script>   
