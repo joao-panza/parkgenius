@@ -27,10 +27,11 @@ namespace ParkGenius.Controllers
             }
 
             // Busca veículos que contenham a placa fornecida
-            var EntradaSaida = (from entrada in _context.EntradasSaidas
-                                join veiculo in _context.Veiculos
-                                on entrada.Id_Veiculo equals veiculo.Id_Veiculo
-                                where entrada.data_saida == null // Veículos ainda estacionados
+               var EntradaSaida = (from entrada in _context.EntradasSaidas
+                         join veiculo in _context.Veiculos
+                         on entrada.Id_Veiculo equals veiculo.Id_Veiculo
+                         where entrada.data_saida == null && veiculo.Placa == placa
+                         // Veículos ainda estacionados
                                 select new
                                 {
                                     veiculo.Placa,
@@ -39,7 +40,7 @@ namespace ParkGenius.Controllers
                                 }).ToList();
 
             // Verifica se algum veículo foi encontrado
-            if (EntradaSaida == null)
+           if (EntradaSaida == null || EntradaSaida.Count == 0)
             {
                 return NotFound(new { message = "Nenhum veículo encontrado com essa placa." });
             }
